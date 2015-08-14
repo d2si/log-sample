@@ -45,7 +45,7 @@
   vars:
     syslog_ng_remote_sources:
       epiconcept:
-        ip: "{{ ansible_eth0.ipv4.address }}"
+        ip: "{{ ansible_default_ipv4.address }}"
         proto: "tcp"
         port: 514
         log_dir: "/space/log"
