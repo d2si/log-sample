@@ -1,9 +1,12 @@
 ---
 - hosts: logservers-ssl
+  vars_prompt:
+    - name: "ca_passphrase"
+      prompt: "passphrase for CA private key"
   vars:
     syslog_ng_remote_sources:
       epiconcept_tls:
-        ip: "{{ ansible_eth0.ipv4.address }}"
+        ip: "{{ ansible_default_ipv4.address }}"
         proto: tls
         port: 10514
         ca_dir:  "{{ syslog_ng_config_dir }}/ssl/ca"
