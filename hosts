@@ -1,0 +1,9 @@
+[webservers]
+ec2-52-28-245-135.eu-central-1.compute.amazonaws.com ansible_ssh_user=root
+ec2-52-28-235-66.eu-central-1.compute.amazonaws.com ansible_ssh_user=root
+
+[logservers]
+ec2-52-28-245-171.eu-central-1.compute.amazonaws.com ansible_ssh_user=root
+
+[logservers-ssl]
+ec2-52-28-192-11.eu-central-1.compute.amazonaws.com ansible_ssh_user=root

@@ -1,0 +1,36 @@
+---
+- hosts: webservers
+  vars:
+    apache_create_vhosts: true
+    apache_vhosts_filename: "vhosts.conf"
+    apache_listen_port: 8080
+    apache_vhosts:
+      - servername: "epiconcept.fr"
+        serveralias: "epi"
+        documentroot: "/var/www/vhosts/epiconcept_fr"
+        extra_parameters: >
+          {{ "\n" }}
+          ErrorLog    /var/log/apache2/errors.log {{ "\n" }}
+          ErrorLog    "|/usr/bin/logger -t www_epiconcept_fr_error -p local6.info" {{ "\n" }}
+          CustomLog   /var/log/apache2/access.log combined {{ "\n" }}
+          CustomLog   "|/usr/bin/logger -t www_epiconcept_fr_access -p local6.info" combined {{ "\n" }}
+
+    ca_certificate: "root-ca.pem"
+    rsyslog_remote_loggers:
+      syslog-ng1:
+        remote_host: "ip-172-31-2-247.eu-central-1.compute.internal"
+        remote_port: "10514"
+        ssl: true
+        filters:
+          - "auth.*"
+          - "local6.*"
+      syslog-ng2:
+        remote_host: "ip-172-31-2-248.eu-central-1.compute.internal"
+        remote_port: "514"
+        ssl: false
+        filters:
+          - "auth.*"
+
+  roles:
+    - apache
+    - rsyslog

@@ -1,0 +1,56 @@
+---
+- hosts: logservers-ssl
+  vars:
+    syslog_ng_remote_sources:
+      epiconcept_tls:
+        ip: "{{ ansible_eth0.ipv4.address }}"
+        proto: tls
+        port: 10514
+        ca_dir:  "{{ syslog_ng_config_dir }}/ssl/ca"
+        key_file: "{{ syslog_ng_config_dir }}/ssl/{{ syslog_cert_name }}-key.pem"
+        cert_file: "{{ syslog_ng_config_dir }}/ssl/{{ syslog_cert_name }}-crt.pem"
+        log_dir: "/space/log"
+
+        loggers:
+          log_auth:
+            filter: "facility(auth, authpriv) and not filter(f_debug);"
+            log_file: "$HOST/system/$YEAR/$MONTH/$DAY/auth.log"
+
+          log_apache:
+            filter: "facility(local6) and not filter(f_debug);"
+            log_file: "$HOST/application/$YEAR/$MONTH/$DAY/apache_$PROGRAM.log"
+
+    syslog_cert_name: "syslog"
+    ca_certificate: "root-ca.pem"
+    ca_private_key: "root-ca-key.pem"
+
+    syslog_cert_subj:
+      name: 'syslog-epiconcept'
+      domains: ["{{ ansible_fqdn }}"]
+      country: 'FR'
+      state: 'France'
+      city: 'Paris'
+      organization: 'Epiconcept'
+      unit: ''
+      email: 'syslog@epiconcept.fr'
+      days: 365
+
+  roles:
+    - syslog-ng
+
+- hosts: logservers
+  vars:
+    syslog_ng_remote_sources:
+      epiconcept:
+        ip: "{{ ansible_eth0.ipv4.address }}"
+        proto: "tcp"
+        port: 514
+        log_dir: "/space/log"
+
+        loggers:
+          log_auth:
+            filter: "facility(auth, authpriv) and not filter(f_debug);"
+            log_file: "$HOST/system/$YEAR/$MONTH/$DAY/auth.log"
+
+  roles:
+    - syslog-ng
